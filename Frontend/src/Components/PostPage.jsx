@@ -57,12 +57,13 @@ const PostPage = () => {
         Get
         </Button>
       </Flex>
-      <Comments />
-      <Comments />
-      <Comments />
-      <Comments />
+      <Comments createdAt="2d" likes={200} userName="Adila" userAvatar="https://bit.ly/dan-abramov" comment="Its nice" />
+      <Comments createdAt="1d" likes={500} userName="Fahim" userAvatar="https://bit.ly/kent-c-dodds" comment="wow" />
+      <Comments createdAt="7d" likes={245} userName="Arya" userAvatar="https://bit.ly/ryan-florence" comment="the day is beautiful" />
+      <Comments createdAt="9d" likes={222} userName="Anugrah" userAvatar="https://bit.ly/prosper-baba" comment="Have a good day mark" />
     </>
   );
 };
 
 export default PostPage;
+ 
