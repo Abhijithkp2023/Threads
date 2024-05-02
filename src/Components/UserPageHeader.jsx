@@ -23,9 +23,9 @@ const UserPageHeader = () => {
   const copyUrl = () => {
     const currentUrl = window.location;
     navigator.clipboard.writeText(currentUrl).then(() => {
-      toast({ description: 'Profile Link Copied' , duration: 2000 })
-    })
-  }
+      toast({ description: "Profile Link Copied", duration: 2000 });
+    });
+  };
   return (
     <VStack alignItems="start" gap="4">
       <Flex justifyContent="space-between" w="full">
@@ -47,7 +47,14 @@ const UserPageHeader = () => {
           </Flex>
         </Box>
         <Box>
-          <Avatar name="Mark zukerberg" src="/zuck-avatar.png" size="xl" />
+          <Avatar
+            name="Mark zukerberg"
+            size={{
+              base: "md",
+              md: "xl",
+            }}
+            src="/zuck-avatar.png"
+          />
         </Box>
       </Flex>
       <Text>Co-founder , Executive Chairman of Meta platforms</Text>
@@ -68,7 +75,9 @@ const UserPageHeader = () => {
               </MenuButton>
               <Portal>
                 <MenuList bg="grey.dark">
-                <MenuItem bg="grey.dark" onClick={copyUrl}>Copy Link</MenuItem>
+                  <MenuItem bg="grey.dark" onClick={copyUrl}>
+                    Copy Link
+                  </MenuItem>
                 </MenuList>
               </Portal>
             </Menu>
@@ -76,10 +85,23 @@ const UserPageHeader = () => {
         </Flex>
       </Flex>
       <Flex w="full">
-        <Flex flex="1" borderBottom="1.5px solid white" justifyContent="center" pb="3" cursor="pointer">
+        <Flex
+          flex="1"
+          borderBottom="1.5px solid white"
+          justifyContent="center"
+          pb="3"
+          cursor="pointer"
+        >
           <Text fontWeight="bold">Threads</Text>
         </Flex>
-        <Flex flex="1" borderBottom="1.5px solid gray" color="gray.white" justifyContent="center" pb="3" cursor="pointer">
+        <Flex
+          flex="1"
+          borderBottom="1.5px solid gray"
+          color="gray.white"
+          justifyContent="center"
+          pb="3"
+          cursor="pointer"
+        >
           Replies
         </Flex>
       </Flex>
