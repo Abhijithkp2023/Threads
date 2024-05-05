@@ -5,7 +5,10 @@ import connectDB from './db/connectDB.js';
 dotenv.config();
 connectDB();
 const app = express();
+
 const PORT = process.env.PORT || 5000;
+app.use(express.json());  // to parse JSON data from req.body
+app.use(express.urlencoded({extended: true}));
 
 
 
