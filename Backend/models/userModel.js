@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const userSchema = mongoose.Schema({
     name: {
-        tyrpe: 'string',
+        type: 'string',
         required: true,
     },
     username: {
@@ -16,7 +16,7 @@ const userSchema = mongoose.Schema({
         unique: true,
     },
     password: {
-        trpe: 'string',
+        type: 'string',
         minLength: 6,
         required: true,
     },
@@ -25,11 +25,11 @@ const userSchema = mongoose.Schema({
         default: ""
     },
     followers: {
-        type: [string],
+        type: ['string'],
         default: [],
     },
     following: {
-        type: [string],
+        type: ['string'],
         default: [],
     },
     bio :{
@@ -40,7 +40,7 @@ const userSchema = mongoose.Schema({
     timestamps: true,
 });
 
-const User =  mongoose.model(User,userSchema);
+const User =  mongoose.model('User',userSchema);
 
 
 export default User;
