@@ -17,7 +17,7 @@ const postSchema = mongoose.Schema({
         type: Number,
         default: 0,
     },
-    replies: {
+    replies: [{
         UserId : {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
@@ -33,12 +33,12 @@ const postSchema = mongoose.Schema({
         username: {
             type: String,
         }
-    }
+}]
 } , {
     timestamps: true,
 })
 
 
-const Post = mongoose.model('Post',postSchema)
+const Post = mongoose.model('Post',postSchema);
 
 export default Post;
