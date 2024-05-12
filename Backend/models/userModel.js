@@ -2,38 +2,38 @@ import mongoose from "mongoose";
 
 const userSchema = mongoose.Schema({
     name: {
-        type: 'string',
+        type: String,
         required: true,
     },
     username: {
-        type: 'string',
+        type: String,
         required: true,
         unique: true,
     },
     email : {
-        type: 'string',
+        type: String,
         required: true,
         unique: true,
     },
     password: {
-        type: 'string',
+        type: String,
         minLength: 6,
         required: true,
     },
     profilepic: {
-        type: 'string',
+        type: String,
         default: ""
     },
     followers: {
-        type: ['string'],
+        type: [String],
         default: [],
     },
     following: {
-        type: ['string'],
+        type: [String],
         default: [],
     },
     bio :{
-        type: 'string',
+        type: String,
         default: ""
     }
 }, {

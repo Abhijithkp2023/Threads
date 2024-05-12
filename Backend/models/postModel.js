@@ -18,8 +18,9 @@ const postSchema = mongoose.Schema({
         ref:"User",
         default: [],
     },
-    replies: [{
-        UserId : {
+    replies: [
+        {
+        userId : {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
