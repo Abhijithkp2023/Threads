@@ -31,8 +31,9 @@ export default function SignupCard() {
     email : "",
     password : "",
   })
-  const setUser = useSetRecoilState(userAtom)
+const setUser = useSetRecoilState(userAtom)
 const showToast = useShowToast();
+
 const handleSignup = async () => {
   console.log(inputs)
   try {
@@ -48,7 +49,7 @@ const handleSignup = async () => {
 
     if(data.error){
       showToast("Error", data.error , "error")
-      return
+      return;
     }
 
     localStorage.setItem("user-threads" , JSON.stringify(data));
