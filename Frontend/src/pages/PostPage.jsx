@@ -1,8 +1,8 @@
 import { Avatar, Flex, Text, Image, Box, Divider, Button } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
-import Actions from "./Actions";
-import Comments from "./Comments";
+import Actions from "../Components/Actions";
+import Comments from "../Components/Comments";
 
 const PostPage = () => {
   const [liked, setLiked] = useState(false)

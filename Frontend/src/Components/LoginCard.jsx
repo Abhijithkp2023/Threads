@@ -18,10 +18,47 @@ import {
   import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useSetRecoilState } from 'recoil';
 import authScreenAtom from '../atoms/authAtom';
+import useShowToast from '../hooks/useShowToast';
+import userAtom from '../atoms/userAtom';
   
   export default function LoginCard() {
     const [showPassword, setShowPassword] = useState(false);
     const setAuthScreen = useSetRecoilState(authScreenAtom)
+    const [inputs , setInputs] = useState({
+      username:"",
+      password:"",
+    })
+    const setUser = useSetRecoilState(userAtom)
+    const toast = useShowToast()
+
+
+    const handleLogin = async () => {
+      
+      try {
+        const res = await fetch("/api/users/login" , {
+          method : "POST",
+          headers:{
+            "Content-Type" : "application/json",
+          },
+          body: JSON.stringify(inputs)
+        });
+
+        const data = await res.json()
+
+        if(data.error) {
+          toast("Error" , data.error , "error")
+          return;
+        } else {
+          localStorage.setItem("user-threads" , JSON.stringify(data))
+          setUser(data)
+        }
+
+       
+        
+      } catch (error) {
+        console.log(error)
+      }
+    }
   
     return (
       <Flex
@@ -51,12 +88,14 @@ import authScreenAtom from '../atoms/authAtom';
             <Stack spacing={4}>
               <FormControl isRequired>
                 <FormLabel>User name</FormLabel>
-                <Input type="text" />
+                <Input type="text" 
+                onChange={(e) => setInputs({...inputs , username:e.target.value})}/>
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Password</FormLabel>
                 <InputGroup>
-                  <Input type={showPassword ? 'text' : 'password'} />
+                  <Input type={showPassword ? 'text' : 'password'} 
+                  onChange={(e) => setInputs({...inputs , password: e.target.value})}/>
                   <InputRightElement h={'full'}>
                     <Button
                       variant={'ghost'}
@@ -76,7 +115,8 @@ import authScreenAtom from '../atoms/authAtom';
                   color={'white'}
                   _hover={{
                     bg: useColorModeValue("gray.700" , "gray.900"),
-                  }}>
+                  }}
+                  onClick={handleLogin}>
                   Login
                 </Button>
               </Stack>

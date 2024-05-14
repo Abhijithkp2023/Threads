@@ -1,6 +1,6 @@
 import React from "react";
-import UserPageHeader from "./UserPageHeader.jsx";
-import UserPost from "./UserPost.jsx";
+import UserPageHeader from "../Components/UserPageHeader.jsx";
+import UserPost from "../Components/UserPost.jsx";
 
 function UserPage() {
   return (

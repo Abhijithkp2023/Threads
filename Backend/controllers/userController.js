@@ -11,7 +11,6 @@ const signupUser = async (req , res ) => {
         console.log(user)
 
     if(user) {
-        console.log("hi")
         return res.status(400).json({error: "user already exists"});
      }
 
