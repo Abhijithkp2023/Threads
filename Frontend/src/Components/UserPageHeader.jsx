@@ -11,30 +11,77 @@ import {
   MenuList,
   Toast,
   useToast,
+  Button,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { BsInstagram } from "react-icons/bs";
 import { CgMoreO } from "react-icons/cg";
+import { useRecoilValue} from "recoil"
+import userAtom from "../atoms/userAtom"
+import {Link as RouterLink} from "react-router-dom";
+import useShowToast from "../hooks/useShowToast";
 
-const UserPageHeader = () => {
-  const toast = useToast();
+const UserPageHeader = ({user}) => {
+  const showToast = useShowToast();
+  const currentUser = useRecoilValue(userAtom)  // logged in user
+  const [following , setFollowing] = useState(user.followers.includes(currentUser._id))
+  const [updating , setUpdating] = useState(false);
+
 
   const copyUrl = () => {
     const currentUrl = window.location;
     navigator.clipboard.writeText(currentUrl).then(() => {
-      toast({ description: "Profile Link Copied", duration: 2000 });
-    });
+      showToast("Success" , "Profile Link Copied" , "success")
+    })
   };
+
+  const handleFollowUnfollow = async () => {
+
+    if(!currentUser){
+      showToast("Error" , "Please Login to follow" , "error")
+    }
+    setUpdating(true)
+
+    try {
+      const res = await fetch(`/api/users/follow/${user._id}` ,  {
+          method : "POST" , 
+          headers : {
+            "Content-Type" : "application/json"
+          },
+      })
+      const data = await res.json()
+      console.log(data)
+      if(data.error){
+        showToast("Er{ror" , data.error , "error")
+        return;
+      }
+      if(following){
+        showToast("Success" , `Unfollowed ${user.name}` ,"success")
+        user.followers.pop(currentUser._id);  //simulate removing from followers 
+      } else {
+        showToast("Success" , `Followed ${user.name}` , "success")
+        user.followers.push(currentUser._id);  //simulate adding to followers 
+      }
+
+      setFollowing(!following)
+
+    } catch (error) {
+      showToast("Error",error,"error")
+    } finally {
+      setUpdating(false)
+    }
+  }
+
   return (
     <VStack alignItems="start" gap="4">
       <Flex justifyContent="space-between" w="full">
         <Box>
           <Text fontSize="2xl" fontWeight="bold">
-            Mark Zukerberg
+         {user.name}
           </Text>
           <Flex gap="2" alignItems="center">
-            <Text fontSize="sm">markzukerberg</Text>
+            <Text fontSize="sm">{user.username}</Text>
             <Text
               fontSize="xs"
               bg="gray.dark"
@@ -47,20 +94,36 @@ const UserPageHeader = () => {
           </Flex>
         </Box>
         <Box>
-          <Avatar
-            name="Mark zukerberg"
+          {user.profilePic && <Avatar
+            name={user.name}
             size={{
               base: "md",
               md: "xl",
             }}
-            src="/zuck-avatar.png"
-          />
+            src={user.profilePic}
+          /> }
+          {!user.profilePic && <Avatar
+            name="https//bit.ly/broken-link"
+            size={{
+              base: "md",
+              md: "xl",
+            }}
+            src={user.profilePic}
+          /> }
         </Box>
       </Flex>
-      <Text>Co-founder , Executive Chairman of Meta platforms</Text>
+      <Text>{user.bio}</Text>
+      {currentUser._id === user._id && (
+        <Link as={RouterLink}  to="/update">
+        <Button size={"sm"}>Update Profile</Button>
+        </Link>
+      )}
+      {currentUser._id !== user._id && (
+        <Button size={"sm"} onClick={handleFollowUnfollow} isLoading={updating}> {following ? "Unfollow" : "Follow"}</Button>
+      )}
       <Flex w="full" justifyContent="space-between">
         <Flex gap="2" alignItems="center">
-          <Text color="gray.light">1M followers</Text>
+          <Text color="gray.light">{user.followers.length} followers</Text>
           <Box w="1" h="1" bg="gray.light" borderRadius="full"></Box>
           <Link color="gray.light">instagram.com</Link>
         </Flex>

@@ -133,9 +133,10 @@ const updateUser = async (req, res) => {
       user.password = hashedPassword;
     }
 
-    if(profilePic) {
+    if (profilePic) {
       if (user.profilePic) {
-        await cloudinary.uploader.destroy(                  //destroy() is feature provide by cloudinary SDK and we extract "ID" from the end of imgageURL and passed to destroy, it will destroy the cloudinary image.No needed to pass entire URL.
+        await cloudinary.uploader.destroy(
+          //destroy() is feature provide by cloudinary SDK and we extract "ID" from the end of imgageURL and passed to destroy, it will destroy the cloudinary image.No needed to pass entire URL.
           user.profilePic.split("/").pop().split(".")[0]
         );
       }
@@ -150,10 +151,10 @@ const updateUser = async (req, res) => {
     user.bio = bio || user.bio;
 
     user = await user.save();
-    
+    user.password = null ; // password should be null in response
     res.status(200).json(user);
-    console.log("user updated successfully");
-  } catch (err) {
+  
+} catch (err) {
     res.status(500).json({ error: err.message });
     console.log("error in update User" + err.message);
   }
