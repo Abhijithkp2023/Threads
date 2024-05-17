@@ -24,13 +24,14 @@ const createPost = async (req, res) => {
       };
 
       if(image){
-        const uploadedResponse = await cloudinary.uploader.upload(profilePic);
+        const uploadedResponse = await cloudinary.uploader.upload(image);
         image = uploadedResponse.secure_url;
       }
 
     const newPost = new Post({ postedBy, text, image });
     await newPost.save();
     res.status(200).json({ message: "Post saved successfully", newPost });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
     console.log("error in posting" + err);
