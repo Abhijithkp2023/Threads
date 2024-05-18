@@ -18,7 +18,7 @@ cloudinary.config({
 });
 
 
-app.use(express.json());  // to parse JSON data from req.body
+app.use(express.json({limit:"50mb"}));  // to parse JSON data from req.body
 app.use(express.urlencoded({extended: true}));  // to parse data from req.body
 app.use(cookieParser()); 
 

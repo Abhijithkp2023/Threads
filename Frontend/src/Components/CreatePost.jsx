@@ -75,8 +75,8 @@ const CreatePost = () => {
     }
     setImgUrl("")
     setPostText("")
-    showToast("Success" , "Post created successfully");
-    setUpdating(false)
+    showToast("Success" , "Post created successfully" , "success");
+    setLoading(false)
     onClose();
     } catch (error) {
       showToast("Error" , error , "error")
