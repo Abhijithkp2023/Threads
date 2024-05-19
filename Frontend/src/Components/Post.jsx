@@ -10,16 +10,17 @@ import {
     Portal,
     Text,
   } from "@chakra-ui/react";
-  import { Link } from "react-router-dom";
-  import React, { useEffect, useState } from "react";
-  import { BsThreeDots } from "react-icons/bs";
-  import Actions from "./Actions";
+import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import Actions from "./Actions";
 import useShowToast from "../hooks/useShowToast";
+import {formatDistanceToNowStrict} from "date-fns"
   
   const Post = ({post , postedBy}) => {
-    const [liked, setLiked] = useState(false);
+  
     const showToast = useShowToast()
     const [user , setUser] = useState(null)
+    const navigate = useNavigate()
     
     useEffect(()  => {
         const getUser = async ()  => {
@@ -40,10 +41,15 @@ import useShowToast from "../hooks/useShowToast";
     } , [postedBy , showToast]);
    
     return (
-      <Link to="/markzukerberg/post/1">
+      <Link to={`/${user?.username}/post/${post._id}`}>
         <Flex gap="3" mb="4" py="5" w="full">
           <Flex flexDirection="column" alignItems="center">
-            <Avatar size="md" name={user?.name} src={user?.profilePic} />
+            <Avatar size="md" name={user?.name} src={user?.profilePic}
+            onClick={(e) => {
+              e.preventDefault()
+              navigate(`/${user?.username}`)
+            }}
+            />
             <Box w="1px" h="full" bg="gray.light" my="2"></Box>
             <Box position="relative" w="full">
               <Avatar
@@ -78,20 +84,22 @@ import useShowToast from "../hooks/useShowToast";
           <Flex flexDirection="column" gap="2" w="full">
             <Flex justifyContent="space-between" w="full">
               <Flex w="full" alignItems="center">
-                <Text fontSize="sm" fontWeight="bold">
+                <Text fontSize="sm" fontWeight="bold" 
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate(`/${user?.username}`)
+                }}
+                >
                   {user?.username}
                 </Text>
                 <Image src="/verified.png" w="4" h="4" ml="4" />
               </Flex>
               <Flex gap="4" alignItems="center">
-                <Text fontSize="sm" color="gray.light">
-                  1d
+                <Text fontSize="xs" w="20" textAlign="right"  color="gray.light">
+                  {formatDistanceToNowStrict(new Date(post.createdAt) , {addSuffix: true}) }
                 </Text>
                 <Box onClick={(e) => e.preventDefault()}>
                   <Menu>
-                    <MenuButton>
-                      <BsThreeDots />
-                    </MenuButton>
                     <MenuList >
                       <MenuItem>Copy Link</MenuItem>
                     </MenuList>
@@ -111,16 +119,7 @@ import useShowToast from "../hooks/useShowToast";
               </Box>
             )}
             <Flex gap="3" my="1">
-              <Actions liked={liked} setLiked={setLiked} />
-            </Flex>
-            <Flex gap="3" alignItems="center">
-              <Text fontSize="sm" color="gray.light">
-                {post.replies.length} Replies
-              </Text>
-              <Box w="0.5" h="0.5" borderRadius="full" bg="gray.light"></Box>
-              <Text fontSize="sm" color="gray.light">
-                {post.likes.length} likes
-              </Text>
+              <Actions post={post} />
             </Flex>
           </Flex>
         </Flex>
