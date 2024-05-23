@@ -20,18 +20,17 @@ const createPost = async (req, res) => {
     if (text.length > maxLength) {
       return res
         .status(400)
-        .json({ error: `Text must be less than ${maxLength} charactors` })
-      };
+        .json({ error: `Text must be less than ${maxLength} charactors` });
+    }
 
-      if(image){
-        const uploadedResponse = await cloudinary.uploader.upload(image);
-        image = uploadedResponse.secure_url;
-      }
+    if (image) {
+      const uploadedResponse = await cloudinary.uploader.upload(image);
+      image = uploadedResponse.secure_url;
+    }
 
     const newPost = new Post({ postedBy, text, image });
     await newPost.save();
     res.status(200).json({ message: "Post saved successfully", newPost });
-
   } catch (err) {
     res.status(500).json({ error: err.message });
     console.log("error in posting" + err);
@@ -86,7 +85,6 @@ const likeUnlikePost = async (req, res) => {
       await post.save();
       res.status(200).json({ message: "post liked successfully" });
     }
-    
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -94,7 +92,7 @@ const likeUnlikePost = async (req, res) => {
 
 const replayToPost = async (req, res) => {
   try {
-    const {text} = req.body;
+    const { text } = req.body;
     const postId = req.params.id;
     const userId = req.user._id;
     const userProfilePic = req.user.profilePic;
@@ -112,30 +110,51 @@ const replayToPost = async (req, res) => {
     post.replies.push(replay);
     await post.save();
 
-    res.status(200).json({message: "Replay posted successfully" , post})
+    res.status(200).json({ message: "Replay posted successfully", post });
   } catch (err) {
     res.status(400).json({ message: err.message });
     console.log("unable to replay post");
   }
 };
 
-
-const getFeedPosts = async (req , res) => {
+const getFeedPosts = async (req, res) => {
   try {
     const userId = req.user._id;
-    const user = await User.findById(userId)
+    const user = await User.findById(userId);
 
-    if(!user) return res.status(404).json({message : "user not found"})
+    if (!user) return res.status(404).json({ message: "user not found" });
 
-      const following = user.following;
+    const following = user.following;
 
-      const feedPosts = await Post.find({postedBy:{$in : following}}).sort({createdAt : -1});
-      
-      res.status(200).json(feedPosts);
+    const feedPosts = await Post.find({ postedBy: { $in: following } }).sort({
+      createdAt: -1,
+    });
 
+    res.status(200).json(feedPosts);
   } catch (err) {
-    res.status(600).json({error : err.message})
+    res.status(600).json({ error: err.message });
   }
-}
+};
 
-export { createPost, getPost, deletePost, likeUnlikePost, replayToPost , getFeedPosts };
+const getUserPosts = async (req , res) => {
+  const { username } = req.params;
+  try {
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ error: "user not found" });
+    const posts = await Post.find(
+      { postedBy: user._id }).sort({ createdAt: -1 });
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export {
+  createPost,
+  getPost,
+  deletePost,
+  likeUnlikePost,
+  replayToPost,
+  getFeedPosts,
+  getUserPosts,
+};
