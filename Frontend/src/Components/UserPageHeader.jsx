@@ -25,7 +25,7 @@ import useShowToast from "../hooks/useShowToast";
 const UserPageHeader = ({user}) => {
   const showToast = useShowToast();
   const currentUser = useRecoilValue(userAtom)  // logged in user
-  const [following , setFollowing] = useState(user.followers.includes(currentUser._id))
+  const [following , setFollowing] = useState(user.followers.includes(currentUser?._id))
   const [updating , setUpdating] = useState(false);
 
 
@@ -58,10 +58,10 @@ const UserPageHeader = ({user}) => {
       }
       if(following){
         showToast("Success" , `Unfollowed ${user.name}` ,"success")
-        user.followers.pop(currentUser._id);  //simulate removing from followers 
+        user.followers.pop(currentUser?._id);  //simulate removing from followers 
       } else {
         showToast("Success" , `Followed ${user.name}` , "success")
-        user.followers.push(currentUser._id);  //simulate adding to followers 
+        user.followers.push(currentUser?._id);  //simulate adding to followers 
       }
 
       setFollowing(!following)

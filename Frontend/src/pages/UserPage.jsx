@@ -36,7 +36,6 @@ function UserPage() {
       try {
         const res = await fetch(`/api/posts/user/${username}`);
         const data = await res.json()
-        console.log(data)
         setPosts(data)
       } catch (error) {
         showToast("Error" , error.message , "error");
@@ -73,7 +72,7 @@ function UserPage() {
       <UserPageHeader user={user} />
       {!fetchPosts && posts.length === 0 && <h1>User has no posts</h1>}
       {fetchPosts && <Flex justifyContent="center" pt="25px"><Spinner size={"xl"} /></Flex>}
-      {posts.map((post) => <Post  key="post._id" post={post} postedBy={post.postedBy} />)}
+      {posts?.map((post) => <Post  key="post._id" post={post} postedBy={post.postedBy} />)}
     </>
   );
 }

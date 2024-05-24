@@ -15,12 +15,16 @@ import React, { useEffect, useState } from "react";
 import Actions from "./Actions";
 import useShowToast from "../hooks/useShowToast";
 import {formatDistanceToNowStrict} from "date-fns"
+import { DeleteIcon } from "@chakra-ui/icons"
+import { useRecoilValue } from "recoil";
+import userAtom from "../atoms/userAtom";
   
   const Post = ({post , postedBy}) => {
   
     const showToast = useShowToast()
     const [user , setUser] = useState(null)
     const navigate = useNavigate()
+    const currentUser = useRecoilValue(userAtom)
     
     useEffect(()  => {
         const getUser = async ()  => {
@@ -39,6 +43,25 @@ import {formatDistanceToNowStrict} from "date-fns"
         }
         getUser();
     } , [postedBy , showToast]);
+
+    const handleDeletePost = async (e) => {
+      e.preventDefault()
+      try {
+        if(!window.confirm("Are you sure you want to delete this post?")) return;
+
+        const res = await fetch(`api/posts/${post._id}` , {
+          method: "DELETE"
+        });
+        const data = await res.json()
+        console.log(data)
+        if(data.error) {
+          showToast("Error" , data.error , "error")
+        }
+        showToast("Success" , "Post deleted" , "success")
+      } catch (error) {
+        showToast("Error" , error.message , "error")
+      }
+    }
    
     return (
       <Link to={`/${user?.username}/post/${post._id}`}>
@@ -98,6 +121,7 @@ import {formatDistanceToNowStrict} from "date-fns"
                 <Text fontSize="xs" w="20" textAlign="right"  color="gray.light">
                   {formatDistanceToNowStrict(new Date(post.createdAt) , {addSuffix: true}) }
                 </Text>
+                {currentUser?._id === user?._id && <DeleteIcon onClick={handleDeletePost} /> }
                 <Box onClick={(e) => e.preventDefault()}>
                   <Menu>
                     <MenuList >
