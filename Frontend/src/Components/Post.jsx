@@ -19,7 +19,7 @@ import { DeleteIcon } from "@chakra-ui/icons"
 import { useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
   
-  const Post = ({post , postedBy}) => {
+  const Post = ({post , postedBy , setPosts}) => {
   
     const showToast = useShowToast()
     const [user , setUser] = useState(null)
@@ -44,6 +44,7 @@ import userAtom from "../atoms/userAtom";
         getUser();
     } , [postedBy , showToast]);
 
+
     const handleDeletePost = async (e) => {
       e.preventDefault()
       try {
@@ -53,11 +54,11 @@ import userAtom from "../atoms/userAtom";
           method: "DELETE"
         });
         const data = await res.json()
-        console.log(data)
         if(data.error) {
           showToast("Error" , data.error , "error")
         }
         showToast("Success" , "Post deleted" , "success")
+        setPosts((prev) => prev.filter((p) => p._id !== post._id))
       } catch (error) {
         showToast("Error" , error.message , "error")
       }
