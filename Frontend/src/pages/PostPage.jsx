@@ -72,6 +72,8 @@ const PostPage = () => {
       </Flex>
     );
   }
+
+  console.log(post?.replies)
 console.log(post?.replies)
   if (!post) return null;
 
@@ -119,9 +121,9 @@ console.log(post?.replies)
         <Button>Get</Button>
       </Flex>
       <Divider my="4" />
-      {post.replies.map((reply) => {
+      {post.replies.map((reply) => (
          <Comments  key={reply._id}  reply={reply}/> 
-      })}
+      ))}
       
     </>
   );

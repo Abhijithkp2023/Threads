@@ -21,7 +21,16 @@ function App() {
           <Route path="/" element={user ? <Homepage /> : <Navigate to="/auth" />} />
           <Route path="/update" element={user ? <UpdateProfilePage /> : <Navigate to="/auth" />} />
           <Route path="/auth" element={ !user ? <AuthPagae /> : <Navigate to="/" /> } />
-          <Route path="/:username" element={<UserPage />} />
+          <Route path="/:username" element={user ? 
+            ( 
+            <>
+            <UserPage /> 
+             <CreatePost />
+            </>
+            ) : (
+            <UserPage />
+            )
+            } />
           <Route path="/:username/post/:id" element={<PostPage />} />
         </Routes>
         {user && <LogoutButton />}

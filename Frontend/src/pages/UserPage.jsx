@@ -6,12 +6,14 @@ import useShowToast from "../hooks/useShowToast.js"
 import { Spinner ,Flex } from "@chakra-ui/react";
 import Post from "../Components/Post.jsx";
 import useGetUserProfile from "../hooks/useGetUserProfile.js";
+import postsAtom from "../atoms/postsAtom.js";
+import { useRecoilState } from "recoil";
 
 function UserPage() {
   const {user , loading} = useGetUserProfile()
   const { username }  = useParams();
   const showToast = useShowToast()
-  const [posts , setPosts] = useState([])
+  const [posts , setPosts] = useRecoilState(postsAtom)
   const [fetchPosts , setFetchPosts ]  = useState(true)
 
   useEffect(() => {
@@ -32,7 +34,7 @@ function UserPage() {
     };
     
     getPosts()
-  } , [username , showToast])
+  } , [username , showToast , setPosts])
 
   
 
