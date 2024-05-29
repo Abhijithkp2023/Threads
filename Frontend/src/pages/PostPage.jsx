@@ -16,18 +16,20 @@ import useGetUserProfile from "../hooks/useGetUserProfile";
 import useShowToast from "../hooks/useShowToast";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatDistanceToNowStrict } from "date-fns";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
 import { DeleteIcon } from "@chakra-ui/icons";
+import postsAtom from "../atoms/postsAtom.js";
 
 const PostPage = () => {
   const { user, loading } = useGetUserProfile();
-  const [post, setPost] = useState();
+  const [posts, setPosts] = useRecoilState(postsAtom)
   const showToast = useShowToast();
   const { id } = useParams();
   const currentUser = useRecoilValue(userAtom)
   const navigate = useNavigate()
 
+  const currentPost = posts[0]
 
   useEffect(() => {
     const getPost = async () => {
@@ -37,20 +39,20 @@ const PostPage = () => {
         if (data.error) {
           showToast("Error", error, "error");
         }
-        setPost(data);
+        setPosts([data]);
       } catch (error) {
         showToast("Error", error, "error");
       }
     };
 
     getPost();
-  }, []);
+  }, [showToast ,id , setPosts] );
 
   const handleDeletePost = async () => {
     try {
       if(!window.confirm("Are you sure you want to delete this post?")) return;
 
-      const res = await fetch(`/api/posts/${post._id}` , {
+      const res = await fetch(`/api/posts/${currentPost._id}` , {
         method: "DELETE"
       });
       const data = await res.json()
@@ -72,11 +74,8 @@ const PostPage = () => {
       </Flex>
     );
   }
-
-  console.log(post?.replies)
-console.log(post?.replies)
-  if (!post) return null;
-
+  
+  if (!currentPost) return null;
   return (
     <>
       <Flex>
@@ -91,7 +90,7 @@ console.log(post?.replies)
         </Flex>
         <Flex gap="4" alignItems="center">
           <Text fontSize="xs" w="20" textAlign="right" color="gray.light">
-            {formatDistanceToNowStrict(new Date(post.createdAt), {
+            {formatDistanceToNowStrict(new Date(currentPost?.createdAt), {
               addSuffix: true,
             })}
           </Text>
@@ -100,17 +99,17 @@ console.log(post?.replies)
           )}
         </Flex>
       </Flex>
-      <Text my="3">{post?.text}</Text>
+      <Text my="3">{currentPost?.text}</Text>
       <Box
         borderRadius="6"
         overflow="hidden"
         border="1px solid"
         borderColor="gray.light"
       >
-        {post?.image && <Image src={post?.image} w="full" />}
+        {currentPost?.image && <Image src={currentPost?.image} w="full" />}
       </Box>
       <Flex>
-        <Actions post={post} />
+        <Actions post={currentPost} />
       </Flex>
       <Divider my="4" />
       <Flex justifyContent="space-between">
@@ -121,7 +120,7 @@ console.log(post?.replies)
         <Button>Get</Button>
       </Flex>
       <Divider my="4" />
-      {post.replies.map((reply) => (
+      {currentPost.replies.map((reply) => (
          <Comments  key={reply._id}  reply={reply}/> 
       ))}
       

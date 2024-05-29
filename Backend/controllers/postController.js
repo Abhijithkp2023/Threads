@@ -116,7 +116,7 @@ const replayToPost = async (req, res) => {
     post.replies.push(replay);
     await post.save();
 
-    res.status(200).json({ message: "Replay posted successfully", post });
+    res.status(200).json( replay );
   } catch (err) {
     res.status(400).json({ message: err.message });
     console.log("unable to replay post");

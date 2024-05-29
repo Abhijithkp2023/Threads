@@ -16,29 +16,30 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
 import useShowToast from "../hooks/useShowToast";
+import postsAtom from "../atoms/postsAtom";
 
-const Actions = ({ post: post_ }) => {
+const Actions = ({ post }) => {
   const user = useRecoilValue(userAtom);
-  const [liked, setLiked] = useState(post_?.likes.includes(user?._id)); //initial state will be false
+  const [liked, setLiked] = useState(post?.likes.includes(user?._id)); //initial state will be false
   const [isReplying, setIsReplying] = useState(false)
   const [reply, setReply] = useState("");
-  const [post, setpost] = useState(post_);
-  const [liking, setLiking] = useState(false);
+  const [posts, setPosts] = useRecoilState(postsAtom)
+  const [isliking, setIsLiking] = useState(false);
 
 
   const showToast = useShowToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleLikeAndUnlike = async () => {
-    if (liking) return;
-    setLiking(true);
+    if (isliking) return;
+    setIsLiking(true);
     if (!user)
       return showToast("Error", "You must be logged to like the post", "error");
     try {
-      const res = await fetch(`/api/posts/like/${post._id}`, {
+      const res = await fetch(`/api/posts/like/${post._id}`,  {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -52,17 +53,29 @@ const Actions = ({ post: post_ }) => {
 
       if (!liked) {
         //add id of the current user to the post.likes array
-        setpost({ ...post, likes: [...post.likes, user._id] });
+        const updatedPosts =posts.map((p) => {
+          if(p._id === post._id) {
+            return {...p , likes : [...p.likes , user._id]}
+          } 
+          return p;
+        })
+        setPosts(updatedPosts)
       } else {
         //remove id of the current user to the post.likes array
-        setpost({ ...post, likes: post.likes.filter((id) => id !== user._id) });
+        const updatedPosts = posts.map((p) => {
+          if(p._id === post._id) {
+            return ({ ...post, likes: post.likes.filter((id) => id !== user._id) });
+          } 
+          return p;
+        })
+        setPosts(updatedPosts)
       }
 
       setLiked(!liked);
     } catch (error) {
       showToast("Error", "error", "error");
     } finally {
-      setLiking(false);
+      setIsLiking(false);
     }
   };
 
@@ -83,8 +96,14 @@ const Actions = ({ post: post_ }) => {
       if (data.error) {
         showToast("Error", data.error , "error");
       }
-      setpost({...post , replies : [...post.replies , data.reply]})
-      showToast("Success" , "Reply posted successfully" , "success")
+      const updatedPosts = posts.map((p) => {
+        if(p._id === post._id) {
+          return {...p , replies : [...p.replies , data] }
+        }
+        return p;
+      })
+      setPosts(updatedPosts)
+       showToast("Success" , "Reply posted successfully" , "success")
       onClose()
       setReply("");
     } catch (error) {
