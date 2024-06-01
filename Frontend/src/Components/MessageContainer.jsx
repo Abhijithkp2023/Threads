@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import Message from "./Message";
+import  MessageInput  from "./MessageInput.jsx";
 
 const MessageContainer = () => {
   return (
@@ -20,15 +21,15 @@ const MessageContainer = () => {
       borderRadius="md"
       flexDirection="column"
     >
-      <Flex w="full" h="12" alignItems="center" gap="2">
+      <Flex w="full" h="12" alignItems="center" gap="2" >
         <Avatar src="" size="sm" />
         <Text display="flex" alignItems="center">
           Abhijith <Image src="/verified.png" w="4" h="4" ml="1" />
         </Text>
       </Flex>
       <Divider />
-      <Flex flexDir="column" gap="4" my="4" height="400px" overflow="scroll">
-        {false &&
+      <Flex flexDir="column" gap="4" my="4" height="400px" overflow="auto" p="2">
+        {true &&
           [...Array(5)].map((_, i) => (
             <Flex
               key="i"
@@ -48,8 +49,13 @@ const MessageContainer = () => {
               {i % 2 !== 0 && <SkeletonCircle size="7" /> } 
             </Flex>
           ))}
-          <Message />
+          <Message ownMessage={true} />
+          <Message ownMessage={false} />
+          <Message ownMessage={false} />
+          <Message ownMessage={true} />
+
       </Flex>
+      <MessageInput />
     </Flex>
   );
 };
