@@ -10,11 +10,22 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import Conversation from "../Components/Conversation";
 import MessageContainer from "../Components/MessageContainer";
+import useShowToast from "../hooks/useShowToast.js"
 
 const ChatPage = () => {
+  const showToast =  useShowToast()
+  useEffect(() => {
+    const getConversation = async () {
+      try {
+        
+      } catch (error) {
+        showToast(("Error" , error.message , "error"))
+      }
+    }
+  }, [])
   return (
     <Box
       position="absolute"
