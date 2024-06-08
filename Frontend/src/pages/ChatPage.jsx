@@ -10,22 +10,37 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Conversation from "../Components/Conversation";
 import MessageContainer from "../Components/MessageContainer";
 import useShowToast from "../hooks/useShowToast.js"
+import { useRecoilState } from "recoil";
+import {conversationAtom} from "../atoms/messageAtom.js"
 
 const ChatPage = () => {
   const showToast =  useShowToast()
+  const [loadingConversations , setLoadingConversations] = useState(true)
+  const [conversations , setConversations] = useRecoilState(conversationAtom)
+
   useEffect(() => {
-    const getConversation = async () {
+    const getConversation = async () => {
       try {
-        
+        const res = await fetch("/api/messages/conversations");
+        const data = await res.json()
+        if(data.error){
+          showToast("Error" , data.error , "error")
+          return
+        }
+        console.log(data);
+        setConversations(data);
       } catch (error) {
         showToast(("Error" , error.message , "error"))
+      }finally {
+        setLoadingConversations(false)
       }
     }
-  }, [])
+    getConversation();
+  }, [showToast , setConversations])
   return (
     <Box
       position="absolute"
@@ -64,7 +79,7 @@ const ChatPage = () => {
               </Button>
             </Flex>
           </form>
-          {false &&
+          { loadingConversations &&
             [0, 1, 2, 3, 4].map((_, i) => (
               <Flex
                 key="i"
@@ -83,12 +98,12 @@ const ChatPage = () => {
                 </Flex>
               </Flex>
             ))}
-          <Conversation />
-          <Conversation />
-          <Conversation />
-          <Conversation />
-          <Conversation />
-        </Flex>
+          {!loadingConversations && (
+            conversations.map((Conversation => (
+              <Conversation key="conversation._id" Conversation={Conversation} />
+            ) ))
+          ) }
+        </Flex> 
         {/* <Flex
           flex="70"
           borderRadius="md"

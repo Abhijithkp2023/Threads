@@ -1,7 +1,7 @@
 import { Avatar, AvatarBadge, Flex, Image, Stack, Text, WrapItem, useColorModeValue } from '@chakra-ui/react'
 import React from 'react'
 
-const Conversation = () => {
+const Conversation = ({Conversation}) => {
   return (
     <Flex gap="4" alignItems="center" p="1" _hover={{
         cursor : "pointer" , 
@@ -14,7 +14,7 @@ const Conversation = () => {
         </WrapItem>
         <Stack>
             <Text fontWeight="700" display="flex" alignItems="center">
-                Abhijith <Image src="/verified.png" w="4" h="4" ml="1" />
+                {Conversation.partici} <Image src="/verified.png" w="4" h="4" ml="1" />
             </Text>
             <Text fontSize="xs" display="flex" alignItems="center" gap="1">
                 Hello , some texts here
