@@ -7,7 +7,7 @@ const sendMessage = async (req,res) => {
         
         const senderId = req.user._id 
 
-        let conversation = await Conversation.find({participents : {$all : [senderId , recipientId]}});
+        let conversation = await Conversation.findOne({participents : {$all : [senderId , recipientId]}});
 
         if(!conversation) {
             conversation = new Conversation({
@@ -32,7 +32,7 @@ const sendMessage = async (req,res) => {
                     text : message,
                     sender : senderId
                 }
-            })
+            }),
         ]);
 
         res.status(201).json(newMessage);
@@ -59,10 +59,6 @@ const getMessages = async (req , res) => {
         const messaages = await Message.find({
             conversationId : conversation._id
         }).sort({createdAt : 1})
-        //remove the currrent user from participants
-        conversations.forEach(Conversation => {
-            participents => participents._id.toString() !== userId.toString()
-        });
             
         res.status(200).json(messaages);
     } catch (error) {
@@ -77,6 +73,12 @@ const getConversations = async (req , res) => {
             path : "participents",
             select : "username profilePic" , 
         })
+         //remove the currrent user from participants
+         conversations.forEach(conversation => {
+            conversation.participents = conversation.participents.filter(
+                participent => participent._id.toString() !== userId.toString()
+            )
+        });
 
         res.status(200).json(conversations)
     } catch (error) {

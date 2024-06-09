@@ -1,5 +1,6 @@
 import { SearchIcon } from "@chakra-ui/icons";
 import { GiConversation } from "react-icons/gi";
+import Conversation from "../Components/Conversation";
 import {
   Box,
   Button,
@@ -11,11 +12,11 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import Conversation from "../Components/Conversation";
 import MessageContainer from "../Components/MessageContainer";
 import useShowToast from "../hooks/useShowToast.js"
 import { useRecoilState } from "recoil";
 import {conversationAtom} from "../atoms/messageAtom.js"
+
 
 const ChatPage = () => {
   const showToast =  useShowToast()
@@ -99,8 +100,8 @@ const ChatPage = () => {
               </Flex>
             ))}
           {!loadingConversations && (
-            conversations.map((Conversation => (
-              <Conversation key="conversation._id" Conversation={Conversation} />
+            conversations.map((conversation => (
+              <Conversation key={conversation._id} conversation={conversation} />
             ) ))
           ) }
         </Flex> 
