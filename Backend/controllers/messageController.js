@@ -71,8 +71,9 @@ const getConversations = async (req , res) => {
     try {
         const conversations = await Conversation.find({participents : userId}).populate({
             path : "participents",
-            select : "username profilePic" , 
+            select : "username profilePic",
         })
+        console.log(conversations)
          //remove the currrent user from participants
          conversations.forEach(conversation => {
             conversation.participents = conversation.participents.filter(

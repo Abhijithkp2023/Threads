@@ -83,7 +83,7 @@ const ChatPage = () => {
           { loadingConversations &&
             [0, 1, 2, 3, 4].map((_, i) => (
               <Flex
-                key="i"
+                key={i}
                 gap="4"
                 alignItems="center"
                 p="1"
