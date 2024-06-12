@@ -13,35 +13,34 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import MessageContainer from "../Components/MessageContainer";
-import useShowToast from "../hooks/useShowToast.js"
+import useShowToast from "../hooks/useShowToast.js";
 import { useRecoilState } from "recoil";
-import {conversationAtom} from "../atoms/messageAtom.js"
-
+import { conversationAtom, selectedConversationAtom } from "../atoms/messageAtom.js";
 
 const ChatPage = () => {
-  const showToast =  useShowToast()
-  const [loadingConversations , setLoadingConversations] = useState(true)
-  const [conversations , setConversations] = useRecoilState(conversationAtom)
+  const showToast = useShowToast();
+  const [loadingConversations, setLoadingConversations] = useState(true);
+  const [conversations, setConversations] = useRecoilState(conversationAtom);
+  const [selectedConversation , setSelectedConversation] = useRecoilState(selectedConversationAtom)
 
   useEffect(() => {
     const getConversation = async () => {
       try {
         const res = await fetch("/api/messages/conversations");
-        const data = await res.json()
-        if(data.error){
-          showToast("Error" , data.error , "error")
-          return
+        const data = await res.json();
+        if (data.error) {
+          showToast("Error", data.error, "error");
+          return;
         }
-        console.log(data);
         setConversations(data);
       } catch (error) {
-        showToast(("Error" , error.message , "error"))
-      }finally {
-        setLoadingConversations(false)
+        showToast(("Error", error.message, "error"));
+      } finally {
+        setLoadingConversations(false);
       }
-    }
+    };
     getConversation();
-  }, [showToast , setConversations])
+  }, [showToast, setConversations]);
   return (
     <Box
       position="absolute"
@@ -80,7 +79,7 @@ const ChatPage = () => {
               </Button>
             </Flex>
           </form>
-          { loadingConversations &&
+          {loadingConversations &&
             [0, 1, 2, 3, 4].map((_, i) => (
               <Flex
                 key={i}
@@ -99,24 +98,28 @@ const ChatPage = () => {
                 </Flex>
               </Flex>
             ))}
-          {!loadingConversations && (
-            conversations.map((conversation => (
-              <Conversation key={conversation._id} conversation={conversation} />
-            ) ))
-          ) }
-        </Flex> 
-        {/* <Flex
-          flex="70"
-          borderRadius="md"
-          alignItems="center"
-          justifyContent="center"
-          height="400px"
-          flexDirection="column"
-        >
-          <GiConversation size={100} />
-          <Text fontSize="20">Select a conversation to start messaging</Text>
-        </Flex> */}
-        <MessageContainer />
+          {!loadingConversations &&
+            conversations.map((conversation) => (
+              <Conversation
+                key={conversation._id}
+                conversation={conversation}
+              />
+            ))}
+        </Flex>
+        {!selectedConversation._id && (
+          <Flex
+            flex="70"
+            borderRadius="md"
+            alignItems="center"
+            justifyContent="center"
+            height="400px"
+            flexDirection="column"
+          >
+            <GiConversation size={100} />
+            <Text fontSize="20">Select a conversation to start messaging</Text>
+          </Flex>
+        )}
+        {selectedConversation._id && <MessageContainer />}
       </Flex>
     </Box>
   );

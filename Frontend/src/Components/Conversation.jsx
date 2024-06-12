@@ -6,6 +6,7 @@ import {
   Stack,
   Text,
   WrapItem,
+  useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
 import React from "react";
@@ -20,8 +21,7 @@ const Conversation = ({ conversation }) => {
   const user = conversation.participents[0];
   const lastMessage = conversation.lastMessage;
   const colorMode = useColorMode()
-
-  console.log("selected conversation " , selectedConversation)
+  
   return (
     <Flex
       gap="4"
@@ -40,7 +40,7 @@ const Conversation = ({ conversation }) => {
         username : user.username,
       })}
       bg={
-        selectedConversation === conversation._id ? (colorMode === "light" )
+        selectedConversation?._id === conversation._id ? (colorMode === "light" ? "gray.400" : "gray.dark"  ) : ""
       }
     >
       <WrapItem>
