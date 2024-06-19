@@ -73,7 +73,6 @@ const getConversations = async (req , res) => {
             path : "participents",
             select : "username profilePic",
         })
-        console.log(conversations)
          //remove the currrent user from participants
          conversations.forEach(conversation => {
             conversation.participents = conversation.participents.filter(

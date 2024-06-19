@@ -35,7 +35,6 @@ const setUser = useSetRecoilState(userAtom)
 const showToast = useShowToast();
 
 const handleSignup = async () => {
-  console.log(inputs)
   try {
     const res = await fetch("/api/users/signup" , {
       method : "POST" , 
@@ -46,7 +45,6 @@ const handleSignup = async () => {
     });
 
     const data = await res.json()
-    console.log(data)
 
     if(data.error){
       showToast("Error", data.error , "error")
