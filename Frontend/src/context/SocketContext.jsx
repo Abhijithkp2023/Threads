@@ -18,7 +18,7 @@ export const SocketContextProvider = ({ children }) => {
   useEffect(() => {
     const socket = io("http://localhost:5000", {
       query: {
-        userId: user?.id,
+        userId: user?._id,
       },
     });
 
@@ -27,11 +27,10 @@ export const SocketContextProvider = ({ children }) => {
     socket.on("getOnlineUsers" , (users) => {
         setOnlineUsers(users)
     })
-    console.log(onlineUsers , "online users")
     return () => socket && socket.close();
-  }, [ user?.id]);
+  }, [ user?._id]);
 
   return (
-    <SocketContext.Provider value={"hi"}>{children}</SocketContext.Provider>
+    <SocketContext.Provider value={{socket , onlineUsers}}>{children}</SocketContext.Provider>
   );
 };
