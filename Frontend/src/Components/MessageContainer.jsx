@@ -12,7 +12,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Message from "./Message";
 import MessageInput from "./MessageInput.jsx";
 import useShowToast from "../hooks/useShowToast.js";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
   conversationAtom,
   selectedConversationAtom,
@@ -22,9 +22,7 @@ import { useSocket } from "../context/SocketContext.jsx";
 
 const MessageContainer = () => {
   const showToast = useShowToast();
-  const [selectedConversation, setSelectedConversation] = useRecoilState(
-    selectedConversationAtom
-  );
+  const selectedConversation = useRecoilValue(selectedConversationAtom);
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [messages, setMessages] = useState([]);
   const currentUser = useRecoilValue(userAtom);
@@ -34,9 +32,9 @@ const MessageContainer = () => {
 
   useEffect(() => {
     socket.on("newMessage", (message) => {
-     if(selectedConversation._id === message.conversationId){
-      setMessages((prevMessage) => [...prevMessage, message]);
-     }
+      if (selectedConversation._id === message.conversationId) {
+        setMessages((prevMessage) => [...prevMessage, message]);
+      }
       setConversations((prev) => {
         const updatedConversatios = prev.map((conversation) => {
           if (conversation._id === message.conversationId) {
@@ -54,11 +52,40 @@ const MessageContainer = () => {
       });
     });
     return () => socket.off("newMessage");
-  }, [socket]);
+  }, [socket, selectedConversation, setConversations]);
 
   useEffect(() => {
-    messageEndRef.current?.scrollIntoView({behaviour: "smooth"});
-  } , [messages])
+    const lastMessageIsFromTheUser =
+      messages.length &&
+      messages[messages.length - 1].sender !== currentUser._id;
+    if (lastMessageIsFromTheUser) {
+      socket.emit("markMessageAsSeen", {
+        conversationId: selectedConversation._id,
+        userId: selectedConversation.userId,
+      });
+    }
+
+    socket.on("messageSeen", ({ conversationId }) => {
+      if (selectedConversation._id === conversationId) {
+        setMessages((prev) => {
+          const updatedMessages = prev.map((message) => {
+            if (!message.seen) {
+              return {
+                ...message,
+                seen: true,
+              };
+            }
+            return message;
+          });
+          return updatedMessages;
+        });
+      }
+    });
+  }, [socket,currentUser._id, messages,selectedConversation]);
+
+  useEffect(() => {
+    messageEndRef.current?.scrollIntoView({ behaviour: "smooth" });
+  }, [messages]);
 
   useEffect(() => {
     const getMessage = async () => {
@@ -79,7 +106,7 @@ const MessageContainer = () => {
       }
     };
     getMessage();
-  }, [showToast, selectedConversation.userId]);
+  }, [showToast, selectedConversation.userId, selectedConversation.mock]);
 
   return (
     <Flex
@@ -127,7 +154,15 @@ const MessageContainer = () => {
           ))}
         {!loadingMessages &&
           messages.map((message) => (
-            <Flex key={message._id} direction="column" ref={messages.length-1 === messages.indexOf(message) ? messageEndRef : null}> 
+            <Flex
+              key={message._id}
+              direction="column"
+              ref={
+                messages.length - 1 === messages.indexOf(message)
+                  ? messageEndRef
+                  : null
+              }
+            >
               <Message
                 ownMessage={currentUser._id === message.sender}
                 message={message}

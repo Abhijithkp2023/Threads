@@ -32,7 +32,27 @@ const ChatPage = () => {
     selectedConversationAtom
   );
   const showToast = useShowToast();
-  const {socket , onlineUsers} = useSocket()
+  const { socket, onlineUsers } = useSocket();
+
+  useEffect(() => {
+    socket?.on("messageSeen", ({ conversationId }) => {
+      setConversations((prev) => {
+        const updatedConversations = prev.map((conversation) => {
+          if (conversation._id === conversationId) {
+            return {
+              ...conversation,
+              lastMessage: {
+                ...conversation.lastMessage,
+                seen: true,
+              },
+            };
+          }
+          return conversation;
+        });
+        return updatedConversations;
+      });
+    });
+  }, [socket, setConversations]);
 
   useEffect(() => {
     const getConversation = async () => {
@@ -96,7 +116,7 @@ const ChatPage = () => {
           },
         ],
       };
-      setConversations((prevConvs) => [...prevConvs. mockConversation]);  
+      setConversations((prevConvs) => [...prevConvs.mockConversation]);
     } catch (error) {
       showToast("Error", error.message, "error");
     } finally {
@@ -171,7 +191,9 @@ const ChatPage = () => {
             conversations.map((conversation) => (
               <Conversation
                 key={conversation._id}
-                isOnline ={onlineUsers.includes(conversation.participents[0]._id)}
+                isOnline={onlineUsers.includes(
+                  conversation.participents[0]._id
+                )}
                 conversation={conversation}
               />
             ))}
