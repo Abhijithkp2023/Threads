@@ -1,15 +1,20 @@
-import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
-import { useState } from "react";
+import { Flex, Image, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react";
+import { useRef, useState } from "react";
 import { IoSendSharp } from "react-icons/io5";
 import useShowToast from "../hooks/useShowToast";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { conversationAtom, selectedConversationAtom } from "../atoms/messageAtom";
+import { BsImageFill } from "react-icons/bs";
+import usePreviewImg from "../hooks/usePreviewImg";
 
 const MessageInput = ({ setMessages }) => {
   const [messageText, setMessageText] = useState("");
   const showToast = useShowToast();
   const selectedConversation = useRecoilValue(selectedConversationAtom);
   const setConversations = useSetRecoilState(conversationAtom)
+  const imageRef = useRef(null)
+  const {onClose} = useDisclosure()
+  const {handleImageChange,imgUrl, setImageUrl } = usePreviewImg()
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -54,7 +59,8 @@ const MessageInput = ({ setMessages }) => {
     }
   };
   return (
-    <form onSubmit={handleSendMessage}>
+    <Flex gap="2" alignItems="center">    
+      <form onSubmit={handleSendMessage} style={{flex : 95}} >
       <InputGroup>
         <Input
           w="full"
@@ -67,6 +73,31 @@ const MessageInput = ({ setMessages }) => {
         </InputRightElement>
       </InputGroup>
     </form>
+    <Flex flex="5" cursor="pointer">
+      <BsImageFill size="20" onClick={ () => imageRef.current.click()} />
+      <Input Input type={"file"} hidden ref={imageRef} onChange={handleImageChange} />
+    </Flex>
+    {<Modal isOpen={imgUrl}
+     onClose={() => {
+      onClose();
+      setImageUrl("")
+    }}>
+      <ModalOverlay />
+        <ModalContent>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Flex mt="5" w="full">
+              <Image src={imgUrl} />
+            </Flex>
+            <Flex justifyContent="flex-end" my="2"> 
+              <IoSendSharp size="24" cursor="pointer" />
+            </Flex>
+          </ModalBody>
+        </ModalContent>
+    </Modal>}
+    </Flex>
+
   );
 };
 
