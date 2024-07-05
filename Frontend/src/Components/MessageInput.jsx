@@ -1,11 +1,11 @@
-import { Flex, Image, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react";
+import { Flex, Image, Input, InputGroup, InputRightElement, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Spinner, useDisclosure } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import { IoSendSharp } from "react-icons/io5";
 import useShowToast from "../hooks/useShowToast";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { conversationAtom, selectedConversationAtom } from "../atoms/messageAtom";
-import { BsImageFill } from "react-icons/bs";
-import usePreviewImg from "../hooks/usePreviewImg";
+import { BsFileImageFill } from "react-icons/bs";
+import usePreviewImg from "../hooks/usePreviewImg.js";
 
 const MessageInput = ({ setMessages }) => {
   const [messageText, setMessageText] = useState("");
@@ -13,13 +13,16 @@ const MessageInput = ({ setMessages }) => {
   const selectedConversation = useRecoilValue(selectedConversationAtom);
   const setConversations = useSetRecoilState(conversationAtom)
   const imageRef = useRef(null)
-  const {onClose} = useDisclosure()
-  const {handleImageChange,imgUrl, setImageUrl } = usePreviewImg()
+  const {onClose,isOpen,onOpen} = useDisclosure()
+  const {handleImageChange,imgUrl,setImgUrl } = usePreviewImg()
+  const [isSending,setIsSending] = useState(false)
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!messageText) return;
+    if (!messageText && !imgUrl) return;
+    if(isSending) return
 
+    setIsSending(true)
     try {
       const res = await fetch("/api/messages", {
         method: "POST",
@@ -29,6 +32,7 @@ const MessageInput = ({ setMessages }) => {
         body: JSON.stringify({
           message: messageText,
           recipientId: selectedConversation.userId,
+          img:imgUrl,
         }),
       });
       const data = await res.json();
@@ -52,10 +56,12 @@ const MessageInput = ({ setMessages }) => {
         })
         return updatedConversations;
       })
+      setImgUrl("")
     } catch (error) {
       showToast("Error", error.message, "error");
     } finally {
       setMessageText("")
+      setIsSending(false)
     }
   };
   return (
@@ -74,13 +80,13 @@ const MessageInput = ({ setMessages }) => {
       </InputGroup>
     </form>
     <Flex flex="5" cursor="pointer">
-      <BsImageFill size="20" onClick={ () => imageRef.current.click()} />
+      <BsFileImageFill size="20" onClick={ () => imageRef.current.click()} />
       <Input Input type={"file"} hidden ref={imageRef} onChange={handleImageChange} />
     </Flex>
     {<Modal isOpen={imgUrl}
      onClose={() => {
       onClose();
-      setImageUrl("")
+      setImgUrl("")
     }}>
       <ModalOverlay />
         <ModalContent>
@@ -91,7 +97,7 @@ const MessageInput = ({ setMessages }) => {
               <Image src={imgUrl} />
             </Flex>
             <Flex justifyContent="flex-end" my="2"> 
-              <IoSendSharp size="24" cursor="pointer" />
+              {!isSending ? (<IoSendSharp size="24" cursor="pointer" onClick={handleSendMessage} />) : (<Spinner size="md"/>)}
             </Flex>
           </ModalBody>
         </ModalContent>

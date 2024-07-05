@@ -13,7 +13,7 @@ const Message = ({ ownMessage , message }) => {
     <>
       {ownMessage ? (
         <Flex gap="2" alignSelf="flex-end">
-          {false && (
+          {message.text && (
           <Flex bg="green.800" maxW="350px" p="1" borderRadius="md">
           <Text color="white">{message.text}</Text>
           <Box alignSelf="flex-end" ml="1" color={message.seen ? "blue.400" : ""} fontWeight="bold">
@@ -21,10 +21,10 @@ const Message = ({ ownMessage , message }) => {
           </Box>
           </Flex>
           )}
-          {true && (
+          {message.img && (
             <Flex mt="5px" w="200px">
               <Image
-              src={"https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"}
+              src={message.img}
               alt='Message image'
               borderRadius={4} 
               />
@@ -46,7 +46,7 @@ const Message = ({ ownMessage , message }) => {
           {message.img && (
             <Flex mt="5px" w="200px">
             <Image
-            src={"https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"}
+            src={message.img}
             alt='Message image'
             borderRadius={4} 
             />
