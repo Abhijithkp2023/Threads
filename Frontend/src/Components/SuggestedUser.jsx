@@ -7,13 +7,13 @@ const SuggestedUser = () => {
   return (
     <Flex gap={2} justifyContent={"space-between"} alignItems={"center"}>
 			<Flex gap={2} as={Link} to={"`${user.username}`"}>
-				<Avatar src={"user.profilePic"} />
+				<Avatar src={user.profilePic} />
 				<Box>
 					<Text fontSize={"sm"} fontWeight={"bold"}>
-						elon musk
+						{user.username}
 					</Text>
 					<Text color={"gray.light"} fontSize={"sm"}>
-						Elon Musk
+						{user.name}
 					</Text>
 				</Box>
 			</Flex>
