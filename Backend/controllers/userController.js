@@ -211,7 +211,7 @@ const users = await User.aggregate([
   {
     $match:{
       _id: {$ne:userId}, 
-    }
+    },
   },
   {
     $sample:{size:10}
@@ -219,7 +219,7 @@ const users = await User.aggregate([
 ])
 const filteredUsers = users.filter(user => !userFollowedByYou.following.includes(user._id));
 const suggestedUsers = filteredUsers.slice(0,4)
-suggestedUsers.forEach(user => user.password = null)
+suggestedUsers.forEach((user) => user.password = null)
 
 res.status(200).json(suggestedUsers)
 

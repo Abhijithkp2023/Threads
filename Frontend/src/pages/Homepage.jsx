@@ -46,7 +46,7 @@ const Homepage = () => {
       )}
       {posts.map((post) => <Post key={post._id} post={post} postedBy={post.postedBy}/> )}
     </Box>
-    <Box border="1px solid red" flex={30}>
+    <Box flex={30}>
       <SuggestedUsers />
     </Box>
     </Flex>

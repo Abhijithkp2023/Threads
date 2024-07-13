@@ -21,13 +21,12 @@ import { useRecoilValue} from "recoil"
 import userAtom from "../atoms/userAtom"
 import {Link as RouterLink} from "react-router-dom";
 import useShowToast from "../hooks/useShowToast";
+import useFollowAndUnfollow from "../hooks/useFollowAndUnfollow";
 
 const UserPageHeader = ({user}) => {
   const showToast = useShowToast();
   const currentUser = useRecoilValue(userAtom)  // logged in user
-  const [following , setFollowing] = useState(user.followers.includes(currentUser?._id))
-  const [updating , setUpdating] = useState(false);
-
+  const {handleFollowUnfollow, following, updating} = useFollowAndUnfollow(user)
 
   const copyUrl = () => {
     const currentUrl = window.location;
@@ -35,43 +34,6 @@ const UserPageHeader = ({user}) => {
       showToast("Success" , "Profile Link Copied" , "success")
     })
   };
-
-  const handleFollowUnfollow = async () => {
-
-    if(!currentUser){
-      showToast("Error" , "Please Login to follow" , "error")
-    }
-    setUpdating(true)
-
-    try {
-      const res = await fetch(`/api/users/follow/${user._id}` ,  {
-          method : "POST" , 
-          headers : {
-            "Content-Type" : "application/json"
-          },
-      })
-      const data = await res.json()
-      console.log(data)
-      if(data.error){
-        showToast("Er{ror" , data.error , "error")
-        return;
-      }
-      if(following){
-        showToast("Success" , `Unfollowed ${user.name}` ,"success")
-        user.followers.pop(currentUser?._id);  //simulate removing from followers 
-      } else {
-        showToast("Success" , `Followed ${user.name}` , "success")
-        user.followers.push(currentUser?._id);  //simulate adding to followers 
-      }
-
-      setFollowing(!following)
-
-    } catch (error) {
-      showToast("Error",error,"error")
-    } finally {
-      setUpdating(false)
-    }
-  }
 
   return (
     <VStack alignItems="start" gap="4">

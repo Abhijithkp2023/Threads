@@ -1,19 +1,20 @@
 import { Avatar, Box, Button, Flex, Text } from '@chakra-ui/react'
 import { Link } from 'react-router-dom'
+import useFollowAndUnfollow from '../hooks/useFollowAndUnfollow.js'
 
-const SuggestedUser = () => {
-    const following = false;
-    const updating = false;
+const SuggestedUser = ({user}) => {
+    const {handleFollowUnfollow, following, updating} = useFollowAndUnfollow(user)
+	console.log(user)
   return (
     <Flex gap={2} justifyContent={"space-between"} alignItems={"center"}>
-			<Flex gap={2} as={Link} to={"`${user.username}`"}>
-				<Avatar src={user.profilePic} />
+			<Flex gap={2} as={Link} to={`${user.username}`}>
+				<Avatar src={user?.profilePic} />
 				<Box>
 					<Text fontSize={"sm"} fontWeight={"bold"}>
-						{user.username}
+						{user?.username}
 					</Text>
 					<Text color={"gray.light"} fontSize={"sm"}>
-						{user.name}
+						{user?.name}
 					</Text>
 				</Box>
 			</Flex>
@@ -21,7 +22,7 @@ const SuggestedUser = () => {
 				size={"sm"}
 				color={following ? "black" : "white"}
 				bg={following ? "white" : "blue.400"}
-				//onClick={handleFollow}
+				onClick={handleFollowUnfollow}
 				isLoading={updating}
 				_hover={{
 					color: following ? "black" : "white",

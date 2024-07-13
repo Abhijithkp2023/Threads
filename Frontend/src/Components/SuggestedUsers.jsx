@@ -12,9 +12,8 @@ const SuggestedUsers = () => {
         const getSuggestedUsers = async () => {
             setLoading(true)
             try {
-                const res = await fetch("/api/users/sugggested");
-                const data = res.json()
-                SuggestedUser(data)
+                const res = await fetch("/api/users/suggested");
+                const data = await res.json()
                 if(data.error) {
                     showToast("Error", data.error, "error")
                 }
@@ -36,7 +35,7 @@ const SuggestedUsers = () => {
 
     <Flex direction="column" gap="4"> 
         {!loading && SuggestedUsers?.map((user) => <SuggestedUser key="user._id" user={user} /> )}
-        {loading && SuggestedUsers?.map((_,idx) => (
+        {loading && [0,1,2,3,4].map((_,idx) => (
         <Flex key={idx} gap="2" alignItems="center" p="1" borderRadius="md">
             <Box>
                 <SkeletonCircle size="10" />

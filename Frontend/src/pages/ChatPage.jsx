@@ -1,6 +1,6 @@
 import { SearchIcon } from "@chakra-ui/icons";
 import { GiConversation } from "react-icons/gi";
-import Conversation from "../Components/Conversation";
+import Conversation from "../Components/Conversation.jsx";
 import {
   Box,
   Button,
