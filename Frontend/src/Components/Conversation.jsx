@@ -46,7 +46,7 @@ const Conversation = ({ conversation , isOnline}) => {
       }
     >
       <WrapItem>
-        <Avatar size="sm" src={user.profilePic}>
+        <Avatar size="sm" src={user?.profilePic}>
           {isOnline ? <AvatarBadge boxSize="1em" bg="green.500" /> : ""}
         </Avatar>
       </WrapItem>

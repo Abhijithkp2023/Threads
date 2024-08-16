@@ -10,22 +10,26 @@ const SuggestedUsers = () => {
 
     useEffect(() => {
         const getSuggestedUsers = async () => {
-            setLoading(true)
+            setLoading(true);
             try {
                 const res = await fetch("/api/users/suggested");
-                const data = await res.json()
-                if(data.error) {
-                    showToast("Error", data.error, "error")
+                const data = await res.json();
+                if (data.error) {
+                    showToast("Error", data.error, "error");
+                    setSuggestedUsers([]); // Handle error case with an empty array
+                } else {
+                    setSuggestedUsers(Array.isArray(data) ? data : []); // Ensure it's an array
                 }
-                setSuggestedUsers(data)
             } catch (error) {
-                showToast("Error", error.message , "error")
-            }finally{
-                setLoading(false)
+                showToast("Error", error.message, "error");
+                setSuggestedUsers([]); // Handle fetch error with an empty array
+            } finally {
+                setLoading(false);
             }
-        }
-        getSuggestedUsers()
-     }, [showToast])
+        };
+        getSuggestedUsers();
+    }, [showToast]);
+    
 
 
 

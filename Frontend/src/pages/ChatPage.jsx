@@ -64,6 +64,7 @@ const ChatPage = () => {
           return;
         }
         setConversations(data);
+        console.log(conversations)
       } catch (error) {
         showToast(("Error", error.message, "error"));
         return;
@@ -82,11 +83,13 @@ const ChatPage = () => {
       const SearchedUser = await res.json();
       if (SearchedUser.error) {
         showToast("Error", SearchedUser.error, "error");
+        return;
       }
 
       const messagingYourself = SearchedUser._id === currentUser._id;
       if (messagingYourself) {
         showToast("Error", "You cant message Yourself", "error");
+        return;
       }
 
       const conversationAlreadyExists = conversations.find(
@@ -111,12 +114,13 @@ const ChatPage = () => {
         _id: Date.now(),
         participents: [
           {
+            _id: SearchedUser._id,
             username: SearchedUser._username,
-            profilePic: SearchedUser.profilePic,
+            profilePic: SearchedUser?.profilePic,
           },
         ],
       };
-      setConversations((prevConvs) => [...prevConvs.mockConversation]);
+      setConversations((prevConvs) => [...prevConvs, mockConversation]);
     } catch (error) {
       showToast("Error", error.message, "error");
     } finally {
