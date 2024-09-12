@@ -16,7 +16,7 @@ import { IoLogOutOutline } from "react-icons/io5";
 import useLogout from "../hooks/useLogout";
 import authScreenAtom from "../atoms/authAtom";
 import { BsFillChatQuoteFill  } from "react-icons/bs";
-
+import { MdOutlineSettings  } from "react-icons/md";
 const Header = () => {
   const { colorMode, toggleColorMode } = useColorMode(); //useColorMode hook provided by Chakra UI to access the current color mode and a function to toggle the color mode.
   const user = useRecoilValue(userAtom);
@@ -54,6 +54,9 @@ const Header = () => {
           </Link>
           <Link as={RouterLink} to={`/chat`}>
             <BsFillChatQuoteFill size="20" />
+          </Link>
+          <Link as={RouterLink} to={`/settings`}>
+            <MdOutlineSettings size="20" />
           </Link>
           <Button size="xs">
             <IoLogOutOutline size="25px" onClick={logout} />

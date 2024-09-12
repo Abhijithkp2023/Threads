@@ -17,6 +17,10 @@ const useGetUserProfile = () => {
           showToast("Error", data.error, "error");
           return;
         }
+        if (data.isFrozen) {
+          setUser(null);
+          return;
+        }
         setUser(data);
       } catch (error) {
         showToast("Error", error, "error");
@@ -26,9 +30,9 @@ const useGetUserProfile = () => {
     };
 
     getUser();
-  } , [showToast , username]);
+  }, [showToast, username]);
 
-  return {setLoading , user}
+  return { setLoading, user };
 };
 
 export default useGetUserProfile;

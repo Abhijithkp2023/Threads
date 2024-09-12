@@ -55,11 +55,19 @@ const loginUser = async (req, res) => {
     const { username, password } = req.body;
     console.log(username,password)
     const user = await User.findOne({ username });
-    console.log(user,"user found")
+    console.log(user)
+    if (!user) {
+      return res.status(404).json({ error: "user not found" });
+    }
     const isPasswordIsCorrect = await bcrypt.compare(password, user?.password);
+    if (!isPasswordIsCorrect) {
+      return res.status(400).json({ error: "password incorrect" });
+    }
 
-    if (!user || !isPasswordIsCorrect) {
-      return res.status(400).json({ error: "invalid username or password" });
+
+    if(user.isFrozen){
+      user.isFrozen = false;
+      await user.save();
     }
     generateTokenAndSetCookie(user._id, res);
 
@@ -231,6 +239,22 @@ res.status(200).json(suggestedUsers)
   }
 }
 
+const freezeAccount = async (req,res) => {
+  try {
+    const user = await User.findById(req.user._id)
+    if(!user){
+      return res.status(400).json({ error: "user not found" });
+    }
+    user.isFrozen = !user.isFrozen
+    await user.save()
+
+    res.status(200).json({success: true})
+
+  } catch (error) {
+    res.status(500).json({error: error.message})
+  }
+}
+
 export {
   signupUser,
   loginUser,
@@ -238,5 +262,6 @@ export {
   followUnfollowUser,
   updateUser,
   getUserProfile,
-  getSuggestedUser
+  getSuggestedUser,
+  freezeAccount
 };

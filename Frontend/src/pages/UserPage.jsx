@@ -20,6 +20,7 @@ function UserPage() {
     
 
     const getPosts = async () => {
+      if(!user) return;
       setFetchPosts(true)
       try {
         const res = await fetch(`/api/posts/user/${username}`);
@@ -34,7 +35,7 @@ function UserPage() {
     };
     
     getPosts()
-  } , [username , showToast , setPosts])
+  } , [username , showToast , setPosts, user])
 
   
 

@@ -31,13 +31,15 @@ import useShowToast from '../hooks/useShowToast.js';
     });
     const fileRef = useRef(null)
     const {handleImageChange , imgUrl} = usePreviewImg();
-    const toast = useShowToast();
+    const ShowToast = useShowToast();
     const [updating , setUpdating] = useState(false)
 
     const handleSubmit = async (e) => {
       e.preventDefault();
+      if(updating) return;
+      setUpdating(true)
       try {
-        setUpdating(true)
+        console.log(inputs)
         const res = await fetch(`/api/users/update/${user._id}` , {
           method: "PUT",
           headers : {
@@ -46,17 +48,17 @@ import useShowToast from '../hooks/useShowToast.js';
           body: JSON.stringify({...inputs , profilePic:imgUrl})
         })
         const data = await res.json()
-        
+        console.log(data)
         if(data.error){
-          toast("Error" , data.error , "error")
+          ShowToast("Error" , data.error , "error")
           return;
         }
-      toast("Success" , "ProfileUpdated Successfully" , "success") 
+        ShowToast("Success" , "ProfileUpdated Successfully" , "success") 
         setUser(data)
         localStorage.setItem("user-threads" , JSON.stringify(data));
 
       } catch (error) {
-        toast("Error" , error , "error")
+        ShowToast("Error" , "Error in updating" , "error")
       } finally {
         setUpdating(false)
       }
